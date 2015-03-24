@@ -1,0 +1,143 @@
+platform:
+
+  # The name of the provider to use.
+  provider: putenv-vcoworkflow
+
+  # The version of the provider
+  plugin_version: 0.1.0.pre
+
+  # The product name for the whole platform.
+  # This will be used as the value for the Chef Org,
+  # as well as other things...
+  # product: myproduct
+  product:
+
+  # Platform have one or more environment.
+  #
+  # Example: array of strings
+  #
+  # environments:
+  #   - int
+  #   - qa
+  #   - stage
+  #   - prod
+  #
+  environments:
+    -
+
+  # Individual virtual machines have an associated node name.
+  # These are passed to the provider plugin module and are
+  # constructed at build time based on the pattern you define
+  # here. Available options are:
+  #
+  # environment    environment name from the key above
+  # component      component name
+  # instance       single leading zero 0..9, up to count of component pool
+  # 'string'       any single quoted string, escape char not evaluated
+  #
+  # Example: array of strings
+  #
+  # nodename:
+  #   - environment
+  #   - '-'
+  #   - component
+  #   - instance
+  #
+  #   would result in => "dev-api01"
+  #
+  nodename:
+    - 'node'
+    - instance
+
+  # You can add any other custom attributes to the platform definition  NOT YET IMPLEMENTED
+  # by creating additional yml files with key values. The referenced
+  # files are, by convention, assumed to have the following structure:
+  #
+  # tags:
+  #
+  #   tagset1: &tagset1
+  #     key1: value
+  #     key2: value
+  #     ...
+  #
+  #   tagset2:
+  #     <<: *tagset1
+  #     key2: override value
+  #
+  #
+  # Example: array of string
+  #
+  # references:
+  #   path: 'infrastructure/'
+  #   keyfiles:
+  #     - tags
+  #
+
+  # Pools are used to define all the required elements of a component.
+  # If you have a front-end web tier, the number of servers in the pool,
+  # the ram, cpu, image to use, etc, are all defined in a pool
+  # definition.
+  #
+  # The keys defined in this template are considered required for this plugin
+  # though you can add additional keys either through references files
+  # or directly.
+  #
+  # vCenter Orchestrator target configuration
+  # vco_url               URL of the vCenter Orchestrator REST API (https://servername:8281/)
+  # workflow_name         Name of the workflow within Orchestrator to provision with
+  # workflow_id           Optional GUID of the workflow in vCO
+  # reservation_policy    Name of the vCAC Reservation to provision against.
+  # execute_on_behalf_of  vCO user account for which our workflow will make
+  #                       vCAC requests.
+  # compute               reference to record set in compute required file
+  # annotations           list of tags to apply to vm during vco workflow
+  # count                 The number of components in the load balance pool
+  # run_list              Chef run_list for the node, array of strings
+  # component_role        optional custom role created by substituting the
+  #                       component name for '#' in the supplied string
+  #
+  # Example
+  #
+  # pools:
+  #   webdefault: &webdefault
+  #     compute: nonprodweb
+  #     annotations: devweb
+  #     count: 2
+  #     run_list:
+  #       - 'role[loc_uswest]'
+  #       - 'role[base]'
+  #     component_role: 'role[aw-#]'
+  #
+  #
+  pools:
+
+    defaultpool: &defaultpool
+      vco_url:
+      workflow_name:
+      workflow_id:
+      reservation_policy:
+      execute_on_behalf_of:
+
+      compute:
+      count:
+      
+      run_list:
+        - role[loc_uswest]
+        - role[active-base]
+      component_role:
+        - role[#]
+
+  # Components define the actual nodes in the platform and a passed as a hash to the provider plugin.
+  #
+  # Example
+  #
+  # components:
+  #
+  #   api:
+  #     <<: *webdefault
+  #     compute: prodapi
+  #
+  #   aui:
+  #     <<: *webdefault
+  #     count: 4
+  components:
